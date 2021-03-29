@@ -10,6 +10,7 @@ protected:
 	Vector2			m_Vec2DPos;
 	GLint			m_iHeight;
 	GLint			m_iWidth;
+	GLfloat			m_2DRotation;
 
 public:
 	Sprite2D(std::shared_ptr<Models> model, std::shared_ptr<Shaders> shader, std::shared_ptr<Texture> texture);
@@ -28,6 +29,9 @@ public:
 
 	Vector2		Get2DPosition();
 	void		SetSize(GLint width, GLint height);
-
+	
+	void		Set2DRotation(GLfloat z);
+	float		Get2DRotation();
+	Vector2		Get2DSize();
 };
 

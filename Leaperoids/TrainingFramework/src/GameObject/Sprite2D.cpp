@@ -11,10 +11,11 @@ extern GLint screenHeight;
 
 void Sprite2D::CaculateWorldMatrix()
 {
-	Matrix m_Sc, m_T;
+	Matrix m_Sc, m_T, m_R, m_P;
 	m_Sc.SetScale(m_Vec3Scale);
 	m_T.SetTranslation(m_Vec3Position);
-	m_WorldMat = m_Sc * m_T;
+	m_R.SetRotationZ(m_Vec3Rotation.z);
+	m_WorldMat = m_Sc * m_R * m_T;
 }
 
 Sprite2D::Sprite2D(std::shared_ptr<Models> model, std::shared_ptr<Shaders> shader, std::shared_ptr<Texture> texture)
@@ -170,4 +171,21 @@ void Sprite2D::SetSize(GLint width, GLint height)
 	m_iHeight = height;
 	m_Vec3Scale = Vector3((float)m_iWidth / screenWidth, (float)m_iHeight / screenHeight, 1);
 	CaculateWorldMatrix();
+}
+
+void Sprite2D::Set2DRotation(GLfloat z)
+{
+	m_2DRotation = z;
+	m_Vec3Rotation = Vector3(0, 0, z);
+	CaculateWorldMatrix();
+}
+
+float Sprite2D::Get2DRotation()
+{
+	return m_2DRotation;
+}
+
+Vector2 Sprite2D::Get2DSize()
+{
+	return Vector2(m_iWidth, m_iHeight);
 }

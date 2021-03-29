@@ -47,12 +47,34 @@ void GSPlay::Init()
 	button->Set2DPosition(screenWidth - 150, 50);
 	button->SetSize(200, 50);
 	button->SetOnClick([]() {
-		GameStateMachine::GetInstance()->PushState(StateTypes::STATE_Menu);
+		GameStateMachine::GetInstance()->ChangeState(StateTypes::STATE_GameOver);
 		//exit(0);
 	});
 	m_listButton.push_back(button);
-	
 
+	//main player
+	texture = ResourceManagers::GetInstance()->GetTexture("playerShip3_blue");
+	m_player = std::make_shared<Player>(model, shader, texture);
+	m_player->Set2DPosition(screenWidth / 2, screenHeight - 100);
+	m_player->Set2DRotation(0);
+	m_player->SetSize(100, 75);
+
+	//bullet pool
+	
+	m_bulletPool = std::make_shared<ObjectPool<Bullet>>();
+
+
+	//sample enemy
+	m_enemyPool = std::make_shared<ObjectPool<Enemy>>();
+	for (int i = 0; i < 5; i++)
+	{
+		auto l_enemy = m_enemyPool->GetObjectT();
+		l_enemy->Set2DPosition(i * 250 + 100, 100);
+		l_enemy->Set2DRotation(PI);
+		l_enemy->SetSize(93, 84);
+		l_enemy->SetTexture(ResourceManagers::GetInstance()->GetTexture("enemyBlack1"));
+		l_enemy->SetBulletPool(m_bulletPool);
+	}
 
 	//text game title
 	shader = ResourceManagers::GetInstance()->GetShader("TextShader");
@@ -85,7 +107,7 @@ void GSPlay::HandleEvents()
 
 void GSPlay::HandleKeyEvents(int key, bool bIsPressed)
 {
-	
+	m_player->HandleKeyEvent(key, bIsPressed);
 }
 
 void GSPlay::HandleTouchEvents(int x, int y, bool bIsPressed)
@@ -94,6 +116,16 @@ void GSPlay::HandleTouchEvents(int x, int y, bool bIsPressed)
 	{
 		(it)->HandleTouchEvents(x, y, bIsPressed);
 		if ((it)->IsHandle()) break;
+	}
+
+	if (bIsPressed)
+	{
+		auto bullet = m_bulletPool->GetObjectT();
+		bullet->Set2DPosition(m_player->Get2DPosition() + 
+			Vector2(sinf(m_player->Get2DRotation()) * 50, cosf(m_player->Get2DRotation()) * -50));
+		bullet->SetVelocity(Vector2(sinf(m_player->Get2DRotation()), cosf(m_player->Get2DRotation())) * -500);
+		bullet->SetTexture(ResourceManagers::GetInstance()->GetTexture("laserRed02"));
+		bullet->SetSize(13, 37);
 	}
 }
 
@@ -104,18 +136,39 @@ void GSPlay::Update(float deltaTime)
 	{
 		it->Update(deltaTime);
 	}
+	m_player->Update(deltaTime);
+	m_bulletPool->Update(deltaTime);
+
+	m_enemyPool->Update(deltaTime);
+	
+	for (auto enemy : m_enemyPool->GetAllActive())
+	{
+		for (auto obj : m_bulletPool->GetAllActive())
+		{
+			if (obj->IsCollided(enemy))
+			{
+				//std::cout << "Collide!" << std::endl;
+				obj->Reset();
+				enemy->SetHP(enemy->GetHP() - 1);
+			}
+		}
+	}
 }
 
 void GSPlay::Draw()
 {
 	m_BackGround->Draw();
 	m_score->Draw();
-
-	for (auto it : m_listButton)
+	
+	for (auto button : m_listButton)
 	{
-		it->Draw();
+		button->Draw();
 	}
 
+	m_player->Draw();
+
+	m_enemyPool->Draw();
+	m_bulletPool->Draw();
 	//m_PausePanel->Draw();
 }
 

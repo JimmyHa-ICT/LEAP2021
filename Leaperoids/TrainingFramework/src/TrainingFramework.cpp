@@ -58,8 +58,6 @@ GLint _tmain(GLint argc, _TCHAR* argv[])
 	//releasing OpenGL resources
 	CleanUp();
 
-	//identifying memory leaks
-	MemoryDump();
 	//printf("Press any key...\n");
 	//_getch();
 

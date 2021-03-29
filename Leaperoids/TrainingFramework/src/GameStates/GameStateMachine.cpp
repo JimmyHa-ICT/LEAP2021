@@ -28,7 +28,6 @@ void GameStateMachine::ChangeState(StateTypes stt)
 {
 	std::shared_ptr<GameStateBase> gstb = GameStateBase::CreateState(stt);
 	ChangeState(gstb);
-	std::cout << "State stack size: " << m_StatesStack.size() << std::endl;
 }
 
 void GameStateMachine::ChangeState(std::shared_ptr<GameStateBase> state)
@@ -46,9 +45,10 @@ void GameStateMachine::PushState(StateTypes stt)
 	}
 
 	// store and init the new state
-	//states.push_back(state);
-	//states.back()->Init();
-	//m_pNextState = state;
+	m_StatesStack.push_back(state);
+	m_StatesStack.back()->Init();
+	m_pActiveState = state;
+
 	std::cout << "State stack size: " << m_StatesStack.size() << std::endl;
 }
 
@@ -71,6 +71,7 @@ void  GameStateMachine::PerformStateChange()
 {
 	if (m_pNextState != 0)
 	{
+		std::cout << "State stack size: " << m_StatesStack.size() << std::endl;
 		// cleanup the current state
 		if (!m_StatesStack.empty()) {
 			m_StatesStack.back()->Exit();
