@@ -16,6 +16,7 @@ public:
 	void SetTexture(std::shared_ptr<Texture> texture);
 	void SetVelocity(Vector2 v);
 	Vector2 GetVelocity();
+	void Init();
 
 private:
 	Vector2	m_velocity;

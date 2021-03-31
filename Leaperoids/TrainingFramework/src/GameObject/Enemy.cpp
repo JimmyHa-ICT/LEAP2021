@@ -40,6 +40,7 @@ void Enemy::EnemyAttack()
 	bullet->Set2DPosition(Get2DPosition() + Vector2(sinf(Get2DRotation()) * 80, cosf(Get2DRotation()) * -80));
 	bullet->SetVelocity(Vector2(sinf(Get2DRotation()), cosf(Get2DRotation())) * -500);
 	bullet->SetTexture(ResourceManagers::GetInstance()->GetTexture("laserRed02"));
+	bullet->Set2DRotation(Get2DRotation());
 	bullet->SetSize(13, 37);
 }
 
@@ -57,4 +58,13 @@ void Enemy::SetTexture(std::shared_ptr<Texture> texture)
 void Enemy::SetBulletPool(std::shared_ptr<ObjectPool<Bullet>> bulletPool)
 {
 	m_bulletPool = bulletPool;
+}
+
+void Enemy::SetVelocity(Vector2 linear)
+{
+
+}
+
+void Enemy::Init()
+{
 }

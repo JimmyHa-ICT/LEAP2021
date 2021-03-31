@@ -52,7 +52,7 @@ void GSMenu::Init()
 	texture = ResourceManagers::GetInstance()->GetTexture("title");
 	m_GameLogo = std::make_shared<Sprite2D>(model, shader, texture);
 	m_GameLogo->Set2DPosition(screenWidth / 2, screenHeight / 2);
-	m_GameLogo->SetSize(800, 100);
+	m_GameLogo->SetSize(600, 75);
 
 
 	//text game title

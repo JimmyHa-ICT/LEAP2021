@@ -57,16 +57,16 @@ void GSPlay::Init()
 	m_player = std::make_shared<Player>(model, shader, texture);
 	m_player->Set2DPosition(screenWidth / 2, screenHeight - 100);
 	m_player->Set2DRotation(0);
-	m_player->SetSize(100, 75);
+	m_player->SetSize(66, 50);
 
 	//bullet pool
 	
 	m_bulletPool = std::make_shared<ObjectPool<Bullet>>();
 
 
-	//sample enemy
+	// enemy pool
 	m_enemyPool = std::make_shared<ObjectPool<Enemy>>();
-	for (int i = 0; i < 5; i++)
+	/*for (int i = 0; i < 5; i++)
 	{
 		auto l_enemy = m_enemyPool->GetObjectT();
 		l_enemy->Set2DPosition(i * 250 + 100, 100);
@@ -74,7 +74,11 @@ void GSPlay::Init()
 		l_enemy->SetSize(93, 84);
 		l_enemy->SetTexture(ResourceManagers::GetInstance()->GetTexture("enemyBlack1"));
 		l_enemy->SetBulletPool(m_bulletPool);
-	}
+	}*/
+
+	// meteor pool
+	m_meteorPool = std::make_shared<ObjectPool<Meteor>>();
+	m_meteorPool->StartSpawning(0.5f);
 
 	//text game title
 	shader = ResourceManagers::GetInstance()->GetShader("TextShader");
@@ -118,13 +122,18 @@ void GSPlay::HandleTouchEvents(int x, int y, bool bIsPressed)
 		if ((it)->IsHandle()) break;
 	}
 
+	//player rotation
+	m_player->HandleTouchEvents(x, y, bIsPressed);
+
+	// player shooting
 	if (bIsPressed)
 	{
 		auto bullet = m_bulletPool->GetObjectT();
 		bullet->Set2DPosition(m_player->Get2DPosition() + 
-			Vector2(sinf(m_player->Get2DRotation()) * 50, cosf(m_player->Get2DRotation()) * -50));
+			Vector2(-50 * sinf(m_player->Get2DRotation()), -50 * cosf(m_player->Get2DRotation())));
 		bullet->SetVelocity(Vector2(sinf(m_player->Get2DRotation()), cosf(m_player->Get2DRotation())) * -500);
 		bullet->SetTexture(ResourceManagers::GetInstance()->GetTexture("laserRed02"));
+		bullet->Set2DRotation(m_player->Get2DRotation());
 		bullet->SetSize(13, 37);
 	}
 }
@@ -140,6 +149,7 @@ void GSPlay::Update(float deltaTime)
 	m_bulletPool->Update(deltaTime);
 
 	m_enemyPool->Update(deltaTime);
+	m_meteorPool->Update(deltaTime);
 	
 	for (auto enemy : m_enemyPool->GetAllActive())
 	{
@@ -150,6 +160,19 @@ void GSPlay::Update(float deltaTime)
 				//std::cout << "Collide!" << std::endl;
 				obj->Reset();
 				enemy->SetHP(enemy->GetHP() - 1);
+			}
+		}
+	}
+
+	for (auto meteor : m_meteorPool->GetAllActive())
+	{
+		for (auto obj : m_bulletPool->GetAllActive())
+		{
+			if (obj->IsCollided(meteor))
+			{
+				//std::cout << "Collide!" << std::endl;
+				obj->Reset();
+				meteor->Reset();
 			}
 		}
 	}
@@ -169,6 +192,7 @@ void GSPlay::Draw()
 
 	m_enemyPool->Draw();
 	m_bulletPool->Draw();
+	m_meteorPool->Draw();
 	//m_PausePanel->Draw();
 }
 

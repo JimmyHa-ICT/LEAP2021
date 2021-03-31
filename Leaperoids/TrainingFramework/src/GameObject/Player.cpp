@@ -14,35 +14,36 @@ Player::~Player()
 
 void Player::HandleTouchEvents(GLint x, GLint y, bool bIsPressed)
 {
-	if ((x > m_Vec2DPos.x - m_iWidth / 2) && (x < m_Vec2DPos.x + m_iWidth / 2) && (y > m_Vec2DPos.y - m_iHeight / 2) && (y < m_Vec2DPos.y + m_iHeight / 2))
-	{
-		
-	}
+	Vector2 pos = Get2DPosition();
+	if (y - pos.y < 0)
+		this->Set2DRotation(atanf((x - pos.x) / (y - pos.y)));
+	else
+		this->Set2DRotation(atanf((x - pos.x) / (y - pos.y)) - PI);
 }
 
 void Player::HandleKeyEvent(unsigned char key, bool bIsPresseded)
 {
 	if (bIsPresseded)
 	{
-		if (key == 'A' || key == 'a')
+		if (key == KEY_MOVE_LEFT)
 			horizontalInput = -1;
 
-		if (key == 'D' || key == 'd')
+		if (key == KEY_MOVE_RIGHT)
 			horizontalInput = 1;
 
-		if (key == 'S' || key == 's')
+		if (key == KEY_MOVE_BACKWORD)
 			verticalInput = 1;
 
-		if (key == 'W' || key == 'w')
+		if (key == KEY_MOVE_FORWORD)
 			verticalInput = -1;
 
-		if (key == 'z' || key == 'Z')
+		/*if (key == 'z' || key == 'Z')
 			rotationInput = -1;
 		if (key == 'c' || key == 'C')
 		{
 			rotationInput = 0;
 			std::cout << m_2DRotation << std::endl;
-		}
+		}*/
 	}
 
 	else
@@ -65,5 +66,5 @@ void Player::Update(GLfloat deltaTime)
 {
 	this->Set2DPosition(m_Vec2DPos.x + horizontalInput * m_velocity * deltaTime,
 		m_Vec2DPos.y + verticalInput * m_velocity * deltaTime);
-	this->Set2DRotation(m_2DRotation + rotationInput * 3.14 / 8 * deltaTime);
+	//this->Set2DRotation(m_2DRotation + rotationInput * 3.14 / 8 * deltaTime);
 }

@@ -64,3 +64,8 @@ Vector2 Bullet::GetVelocity()
 {
 	return m_velocity;
 }
+
+void Bullet::Init()
+{
+
+}

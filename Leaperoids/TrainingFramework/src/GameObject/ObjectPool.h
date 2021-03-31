@@ -9,10 +9,14 @@ class ObjectPool
 private:
 	std::vector<std::shared_ptr<T>> objects;
 	int POOL_SIZE = 100;
+	bool isSpawning = false;
+	float currentTime = 0;
+	float spawnInterval = 1;
 	
 public:
 	ObjectPool()
 	{
+		srand(time(0));
 		Init();
 	}
 
@@ -52,6 +56,18 @@ public:
 
 	void Update(GLfloat deltaTime)
 	{
+		if (isSpawning)
+		{
+			//std::cout << currentTime << std::endl;
+			currentTime += deltaTime;
+			if (currentTime > spawnInterval)
+			{
+				
+				currentTime -= spawnInterval;
+				SpawnObjectT();
+			}
+		}
+
 		for (auto obj : objects)
 		{
 			if (obj->isActive)
@@ -78,5 +94,28 @@ public:
 		}
 
 		return allActives;
+	}
+
+	void StartSpawning(float interval = 1)
+	{
+		isSpawning = true;
+	}
+
+	void SpawnObjectT()
+	{
+		auto meteor = GetObjectT();
+		meteor->Init();
+		meteor->Set2DPosition(-100, 200 + rand() % 400);
+		meteor->SetVelocity(Vector2(rand() % 100 + 200, rand() % 400 - 200));
+		
+		meteor = GetObjectT();
+		meteor->Init();
+		meteor->Set2DPosition(screenWidth + 100, 200 + rand() % 400);
+		meteor->SetVelocity(Vector2(-(rand() % 100 + 200), rand() % 400 - 200));
+	}
+
+	void StopSpawning()
+	{
+		isSpawning = false;
 	}
 };

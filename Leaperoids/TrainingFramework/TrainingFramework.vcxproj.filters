@@ -81,6 +81,9 @@
     <ClCompile Include="src\GameObject\Enemy.cpp">
       <Filter>TrainingFramework\src\GameObject</Filter>
     </ClCompile>
+    <ClCompile Include="src\GameObject\Meteor.cpp">
+      <Filter>TrainingFramework\src\GameObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.h">
@@ -153,6 +156,9 @@
       <Filter>TrainingFramework\src\GameManager</Filter>
     </ClInclude>
     <ClInclude Include="src\GameObject\Enemy.h">
+      <Filter>TrainingFramework\src\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameObject\Meteor.h">
       <Filter>TrainingFramework\src\GameObject</Filter>
     </ClInclude>
   </ItemGroup>

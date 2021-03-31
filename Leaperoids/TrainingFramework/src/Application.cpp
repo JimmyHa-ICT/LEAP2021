@@ -17,6 +17,9 @@ Application::~Application()
 
 void Application::Init()
 {
+	//ResourceManagers::GetInstance()->PlaySound("music_bg.wav");
+	
+
 	glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 	GameStateMachine::GetInstance()->PushState(StateTypes::STATE_Intro);
 }

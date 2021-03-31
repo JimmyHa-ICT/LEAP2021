@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Bullet.h"
 #include "Enemy.h"
+#include "Meteor.h"
 
 #include "ObjectPool.h"
 
@@ -42,5 +43,6 @@ private:
 	std::shared_ptr<Player> m_player;
 	std::shared_ptr<ObjectPool<Bullet>> m_bulletPool;
 	std::shared_ptr<ObjectPool<Enemy>> m_enemyPool;
+	std::shared_ptr<ObjectPool<Meteor>> m_meteorPool;
 };
 

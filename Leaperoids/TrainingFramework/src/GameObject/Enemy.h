@@ -17,6 +17,8 @@ public:
 	void	Reset();
 	void	SetTexture(std::shared_ptr<Texture> texture);
 	void	SetBulletPool(std::shared_ptr<ObjectPool<Bullet>>);
+	void	SetVelocity(Vector2);
+	void	Init();
 
 private:
 	int		m_hp;
