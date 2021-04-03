@@ -1,5 +1,8 @@
 #include "Player.h"
 
+extern int screenWidth; //need get on Graphic engine
+extern int screenHeight; //need get on Graphic engine
+
 
 Player::Player(std::shared_ptr<Models> model, std::shared_ptr<Shaders> shader, std::shared_ptr<Texture> texture)
 	: Sprite2D(model, shader, texture)
@@ -66,5 +69,32 @@ void Player::Update(GLfloat deltaTime)
 {
 	this->Set2DPosition(m_Vec2DPos.x + horizontalInput * m_velocity * deltaTime,
 		m_Vec2DPos.y + verticalInput * m_velocity * deltaTime);
-	//this->Set2DRotation(m_2DRotation + rotationInput * 3.14 / 8 * deltaTime);
+	
+	if (Get2DPosition().x > screenWidth - m_iWidth / 2)
+		Set2DPosition(screenWidth - m_iWidth / 2, Get2DPosition().y);
+	if (Get2DPosition().y > screenHeight - m_iHeight / 2)
+		Set2DPosition(Get2DPosition().x, screenHeight - m_iHeight / 2);
+	if (Get2DPosition().x < m_iWidth / 2)
+		Set2DPosition(m_iWidth / 2, Get2DPosition().y);
+	if (Get2DPosition().y < m_iHeight / 2)
+		Set2DPosition(Get2DPosition().x, m_iHeight / 2);
+}
+
+
+bool Player::IsCollided(std::shared_ptr<Sprite2D> obj)		// AABB box collision detection
+{
+	Vector2 A = this->Get2DPosition();
+	Vector2 B = obj->Get2DPosition();
+
+	if (A.x + this->m_iWidth / 2 < B.x - obj->Get2DSize().x / 2)
+		return false;
+
+	if (A.x - this->m_iWidth / 2 > B.x + obj->Get2DSize().x / 2)
+		return false;
+
+	if (A.y + this->m_iHeight / 2 < B.y - obj->Get2DSize().y / 2)
+		return false;
+
+	if (A.y - this->m_iHeight / 2 > B.y + obj->Get2DSize().y / 2)
+		return false;
 }

@@ -11,6 +11,7 @@ public:
 	void	Update(GLfloat deltaTime);
 	int		GetLives();
 	void	SetLives(int);
+	bool	IsCollided(std::shared_ptr<Sprite2D>);
 
 private:
 	int		m_lives;

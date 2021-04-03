@@ -17,7 +17,7 @@ Application::~Application()
 
 void Application::Init()
 {
-	//ResourceManagers::GetInstance()->PlaySound("music_bg.wav");
+	ResourceManagers::GetInstance()->PlaySound("music_bg.wav", true);
 	
 
 	glClearColor(1.0f, 1.0f, 1.0f, 0.0f);

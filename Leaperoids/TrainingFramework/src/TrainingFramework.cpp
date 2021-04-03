@@ -1,7 +1,8 @@
 #include "targetver.h"
 #include "Shaders.h"
 #include "Application.h"
-#include "utilities.h" 
+#include "utilities.h"
+//#include "vld.h"
 
 GLint screenWidth = 720;
 GLint screenHeight = 720;

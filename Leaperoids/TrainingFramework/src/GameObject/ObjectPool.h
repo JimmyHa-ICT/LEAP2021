@@ -8,7 +8,7 @@ class ObjectPool
 {
 private:
 	std::vector<std::shared_ptr<T>> objects;
-	int POOL_SIZE = 100;
+	int POOL_SIZE = 200;
 	bool isSpawning = false;
 	float currentTime = 0;
 	float spawnInterval = 1;
@@ -26,7 +26,7 @@ public:
 		{
 			auto model = ResourceManagers::GetInstance()->GetModel("Sprite2D");
 			auto shader = ResourceManagers::GetInstance()->GetShader("TextureShader");
-			auto texture = ResourceManagers::GetInstance()->GetTexture("button_play");
+			//auto texture = ResourceManagers::GetInstance()->GetTexture("button_play");
 			auto obj = std::make_shared<T>(model, shader, nullptr);
 			objects.push_back(obj);
 		}

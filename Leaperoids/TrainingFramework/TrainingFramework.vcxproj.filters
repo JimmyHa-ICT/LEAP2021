@@ -84,6 +84,15 @@
     <ClCompile Include="src\GameObject\Meteor.cpp">
       <Filter>TrainingFramework\src\GameObject</Filter>
     </ClCompile>
+    <ClCompile Include="src\Util.cpp">
+      <Filter>TrainingFramework\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameManager\ParticleSystem.cpp">
+      <Filter>TrainingFramework\src\GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObject\Particle.cpp">
+      <Filter>TrainingFramework\src\GameObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.h">
@@ -159,6 +168,15 @@
       <Filter>TrainingFramework\src\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="src\GameObject\Meteor.h">
+      <Filter>TrainingFramework\src\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Util.h">
+      <Filter>TrainingFramework\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameManager\ParticleSystem.h">
+      <Filter>TrainingFramework\src\GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameObject\Particle.h">
       <Filter>TrainingFramework\src\GameObject</Filter>
     </ClInclude>
   </ItemGroup>

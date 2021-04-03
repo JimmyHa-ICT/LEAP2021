@@ -1,5 +1,6 @@
 #pragma once 
 #include "Sprite2D.h"
+#include "ResourceManagers.h"
 
 class GameButton : public Sprite2D
 {

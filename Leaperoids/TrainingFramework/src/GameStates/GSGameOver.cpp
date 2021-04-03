@@ -1,4 +1,5 @@
 #include "GSGameOver.h"
+#include "Util.h"
 
 extern int screenWidth; //need get on Graphic engine
 extern int screenHeight; //need get on Graphic engine
@@ -48,20 +49,16 @@ void GSGameOver::Init()
 		});
 	m_listButton.push_back(button);
 
-	//game logo
-	texture = ResourceManagers::GetInstance()->GetTexture("title");
-	m_GameLogo = std::make_shared<Sprite2D>(model, shader, texture);
-	m_GameLogo->Set2DPosition(screenWidth / 2, screenHeight / 2);
-	m_GameLogo->SetSize(800, 100);
 
-
-	//text game title
-	
-
+	//text game over
 	shader = ResourceManagers::GetInstance()->GetShader("TextShader");
 	std::shared_ptr<Font> font = ResourceManagers::GetInstance()->GetFont("kenvector_future");
-	m_Text_gameName = std::make_shared< Text>(shader, font, "GAME OVER", TEXT_COLOR::GREEN, 1.0);
-	m_Text_gameName->Set2DPosition(Vector2(screenWidth / 2 - 80, 120));
+	m_Text_gameName = std::make_shared< Text>(shader, font, "GAME OVER", TEXT_COLOR::WHILE, 1.5);
+	m_Text_gameName->Set2DPosition(Vector2(screenWidth / 2 - 140, 120));
+
+	//text score
+	m_scoreText = std::make_shared<Text>(shader, font, Util::GetFinalScore(), TEXT_COLOR::RED, 2.5);
+	m_scoreText->Set2DPosition(Vector2(screenWidth / 2 - 140, screenHeight / 2));
 }
 
 void GSGameOver::Exit()
@@ -116,5 +113,5 @@ void GSGameOver::Draw()
 		it->Draw();
 	}
 	m_Text_gameName->Draw();
-	//m_GameLogo->Draw();
+	m_scoreText->Draw();
 }
