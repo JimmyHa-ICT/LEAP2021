@@ -11,4 +11,12 @@ public:
     static std::string GetFinalScore();
 
     static std::string ToStringFixedLength(int value, int digits = 3);
+
+    static std::string ConvertShipTexture(int textr);
+
+    static std::string ConvertLifeTexture(int textr);
+
+    static std::string ConvertBulletTexture(int textr);
+
+    static int shipColor;
 };

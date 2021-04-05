@@ -27,7 +27,7 @@ GSPlay::~GSPlay()
 void GSPlay::Init()
 {
 	auto model = ResourceManagers::GetInstance()->GetModel("Sprite2D");
-	auto texture = ResourceManagers::GetInstance()->GetTexture("bg_black");
+	auto texture = ResourceManagers::GetInstance()->GetTexture("bg_purple");
 
 	//BackGround
 	auto shader = ResourceManagers::GetInstance()->GetShader("TextureShader");
@@ -47,16 +47,16 @@ void GSPlay::Init()
 	m_listButton.push_back(button);
 
 	//main player
-	texture = ResourceManagers::GetInstance()->GetTexture("playerShip3_blue");
+	texture = ResourceManagers::GetInstance()->GetTexture(Util::ConvertShipTexture(Util::shipColor));	//the texture selected in shipselect state
 	m_player = std::make_shared<Player>(model, shader, texture);
 	m_player->Set2DPosition(screenWidth / 2, screenHeight - 100);
 	m_player->Set2DRotation(0);
 	m_player->SetSize(66, 50);
 
-	// all lives
+	// all player lives
 	for (int i = 0; i < m_player->GetLives(); i++)
 	{
-		texture = ResourceManagers::GetInstance()->GetTexture("playerLife3_blue");
+		texture = ResourceManagers::GetInstance()->GetTexture(Util::ConvertLifeTexture(Util::shipColor));
 		auto li = std::make_shared<Sprite2D>(model, shader, texture);
 		li->Set2DPosition(25 + 36 * i, 80);
 		li->SetSize(32, 26);
@@ -70,6 +70,12 @@ void GSPlay::Init()
 
 	// enemy pool
 	m_enemyPool = std::make_shared<ObjectPool<Enemy>>();
+	auto l_enemy = m_enemyPool->GetObjectT();
+	l_enemy->Set2DPosition(0, 0);
+	l_enemy->SetSize(93, 84);
+	l_enemy->SetTexture(ResourceManagers::GetInstance()->GetTexture("enemyBlack1"));
+	l_enemy->SetBulletPool(m_bulletPool);
+	l_enemy->SetTarget(m_player);
 	/*for (int i = 0; i < 5; i++)
 	{
 		auto l_enemy = m_enemyPool->GetObjectT();
@@ -82,7 +88,7 @@ void GSPlay::Init()
 
 	// meteor pool
 	m_meteorPool = std::make_shared<ObjectPool<Meteor>>();
-	m_meteorPool->StartSpawning(0.5f);
+	//m_meteorPool->StartSpawning(0.5f);
 
 	//sample particle system
 	m_particleSystem = std::make_shared<ParticleSystem>();
@@ -94,6 +100,8 @@ void GSPlay::Init()
 	std::shared_ptr<Font> font = ResourceManagers::GetInstance()->GetFont("kenvector_future_thin");
 	m_score_text = std::make_shared< Text>(shader, font, Util::ToStringFixedLength(m_currentScore, 6), TEXT_COLOR::RED, 1.0);
 	m_score_text->Set2DPosition(Vector2(25, 50));
+
+	srand(time(0));
 }
 
 void GSPlay::Exit()
@@ -142,7 +150,7 @@ void GSPlay::HandleTouchEvents(int x, int y, bool bIsPressed)
 		bullet->Set2DPosition(m_player->Get2DPosition() + 
 			Vector2(-50 * sinf(m_player->Get2DRotation()), -50 * cosf(m_player->Get2DRotation())));
 		bullet->SetVelocity(Vector2(sinf(m_player->Get2DRotation()), cosf(m_player->Get2DRotation())) * -500);
-		bullet->SetTexture(ResourceManagers::GetInstance()->GetTexture("laserRed02"));
+		bullet->SetTexture(ResourceManagers::GetInstance()->GetTexture(Util::ConvertBulletTexture(Util::shipColor)));
 		bullet->Set2DRotation(m_player->Get2DRotation());
 		bullet->SetSize(13, 37);
 	}
@@ -170,6 +178,11 @@ void GSPlay::Update(float deltaTime)
 				//std::cout << "Collide!" << std::endl;
 				obj->Reset();
 				enemy->SetHP(enemy->GetHP() - 1);
+				if (enemy->GetHP() > 0)
+					m_particleSystem->Emit("particle2", 8, enemy->Get2DPosition());
+				else
+					m_particleSystem->Emit("particle2", 16, enemy->Get2DPosition());
+				//enemy->ChangeState(EnemyState::AIMING);
 			}
 		}
 	}
@@ -180,11 +193,27 @@ void GSPlay::Update(float deltaTime)
 		{
 			if (obj->IsCollided(meteor))
 			{
-				m_particleSystem->Emit("particle", 8, meteor->Get2DPosition());
-				obj->Reset();
-				meteor->Reset();
+				m_particleSystem->Emit("particle2", 8, meteor->Get2DPosition());
 				m_currentScore += 10;
 				m_score_text->setText(Util::ToStringFixedLength(m_currentScore, 6));
+				obj->Reset();
+				
+				if (meteor->m_textr >= 4)
+				{
+					meteor->SetTexture(rand() % 4);
+
+					auto meteor2 = m_meteorPool->GetObjectT();
+					meteor2->Set2DPosition(meteor->Get2DPosition());
+					meteor2->SetTexture(rand() % 4);
+					meteor2->SetVelocity(Vector2(rand() % 400 - 200, rand() % 400 - 200));
+
+					meteor2 = m_meteorPool->GetObjectT();
+					meteor2->Set2DPosition(meteor->Get2DPosition());
+					meteor2->SetTexture(rand() % 4);
+					meteor2->SetVelocity(Vector2(rand() % 400 - 200, rand() % 400 - 200));
+				}
+				else
+					meteor->Reset();
 			}
 		}
 
@@ -199,6 +228,21 @@ void GSPlay::Update(float deltaTime)
 				GameStateMachine::GetInstance()->ChangeState(StateTypes::STATE_GameOver);
 			}
 
+		}
+	}
+
+	for (auto obj : m_bulletPool->GetAllActive())
+	{
+		if (obj->IsCollided(m_player))
+		{
+			obj->Reset();
+			ResourceManagers::GetInstance()->PlaySound("rollover1.ogg");
+			m_player->SetLives(m_player->GetLives() - 1);
+			if (m_player->GetLives() == 0)
+			{
+				ResourceManagers::GetInstance()->PlaySound("sfx_lose.ogg");
+				GameStateMachine::GetInstance()->ChangeState(StateTypes::STATE_GameOver);
+			}
 		}
 	}
 

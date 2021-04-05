@@ -8,7 +8,7 @@ class ObjectPool
 {
 private:
 	std::vector<std::shared_ptr<T>> objects;
-	int POOL_SIZE = 200;
+	int POOL_SIZE = 100;
 	bool isSpawning = false;
 	float currentTime = 0;
 	float spawnInterval = 1;
@@ -103,15 +103,39 @@ public:
 
 	void SpawnObjectT()
 	{
-		auto meteor = GetObjectT();
-		meteor->Init();
-		meteor->Set2DPosition(-100, 200 + rand() % 400);
-		meteor->SetVelocity(Vector2(rand() % 100 + 200, rand() % 400 - 200));
+		std::shared_ptr<T> meteor;
 		
-		meteor = GetObjectT();
-		meteor->Init();
-		meteor->Set2DPosition(screenWidth + 100, 200 + rand() % 400);
-		meteor->SetVelocity(Vector2(-(rand() % 100 + 200), rand() % 400 - 200));
+		if (rand() % 2 == 1)		// spawn from left
+		{
+			meteor = GetObjectT();
+			meteor->Init();
+			meteor->Set2DPosition(-80, rand() % screenHeight);
+			meteor->SetVelocity(Vector2(rand() % 100 + 200, rand() % 400 - 200));
+		}
+		
+		if (rand() % 2 == 1)		// spawn from top
+		{
+			meteor = GetObjectT();
+			meteor->Init();
+			meteor->Set2DPosition(rand() % screenWidth, -80);
+			meteor->SetVelocity(Vector2(rand() % 400 - 200, rand() % 100  + 200));
+		}
+
+		if (rand() % 2 == 1)		//spawn from right
+		{
+			meteor = GetObjectT();
+			meteor->Init();
+			meteor->Set2DPosition(screenWidth + 80, rand() % screenHeight);
+			meteor->SetVelocity(Vector2(-(rand() % 100 + 200), rand() % 400 - 200));
+		}
+
+		if (rand() % 2 == 1)		// spawn from bottom
+		{
+			meteor = GetObjectT();
+			meteor->Init();
+			meteor->Set2DPosition(rand() % screenWidth, -80);
+			meteor->SetVelocity(Vector2(rand() % 400 - 200, -(rand() % 100 + 200)));
+		}
 	}
 
 	void StopSpawning()

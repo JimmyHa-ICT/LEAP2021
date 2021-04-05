@@ -36,15 +36,9 @@ void Meteor::SetTexture(std::shared_ptr<Texture> texture)
 	m_pTexture = texture;
 }
 
-void Meteor::SetVelocity(Vector2 vel)
+void Meteor::SetTexture(int textr)
 {
-	m_velocity = vel;
-}
-
-void Meteor::Init()
-{
-	srand(time(0));
-	int textr = rand() % 8;
+	m_textr = textr;
 	switch (textr)
 	{
 		case 0:
@@ -66,12 +60,11 @@ void Meteor::Init()
 			break;
 		}
 		case 3:
-			if (textr == 3)
-			{
-				SetTexture(ResourceManagers::GetInstance()->GetTexture("meteorGrey2"));
-				SetSize(45, 40);
-				break;
-			}
+		{
+			SetTexture(ResourceManagers::GetInstance()->GetTexture("meteorGrey2"));
+			SetSize(45, 40);
+			break;
+		}
 		case 4:
 		{
 			SetTexture(ResourceManagers::GetInstance()->GetTexture("meteorBrown_big1"));
@@ -97,4 +90,18 @@ void Meteor::Init()
 			break;
 		}
 	}
+}
+
+void Meteor::SetVelocity(Vector2 vel)
+{
+	m_velocity = vel;
+}
+
+void Meteor::Init()
+{
+	srand(time(0));
+	int textr = rand() % 8;
+
+	m_textr = textr;
+	SetTexture(textr);
 }

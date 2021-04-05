@@ -17,11 +17,14 @@ Player::~Player()
 
 void Player::HandleTouchEvents(GLint x, GLint y, bool bIsPressed)
 {
-	Vector2 pos = Get2DPosition();
-	if (y - pos.y < 0)
-		this->Set2DRotation(atanf((x - pos.x) / (y - pos.y)));
-	else
-		this->Set2DRotation(atanf((x - pos.x) / (y - pos.y)) - PI);
+	if (bIsPressed)
+	{
+		Vector2 pos = Get2DPosition();
+		if (y - pos.y < 0)
+			this->Set2DRotation(atanf((x - pos.x) / (y - pos.y)));
+		else
+			this->Set2DRotation(atanf((x - pos.x) / (y - pos.y)) - PI);
+	}
 }
 
 void Player::HandleKeyEvent(unsigned char key, bool bIsPresseded)

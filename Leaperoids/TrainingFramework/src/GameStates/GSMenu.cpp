@@ -34,7 +34,7 @@ void GSMenu::Init()
 	button->Set2DPosition(screenWidth / 2, 550);
 	button->SetSize(275, 50);
 	button->SetOnClick([]() {
-		GameStateMachine::GetInstance()->PushState(StateTypes::STATE_Play);
+		GameStateMachine::GetInstance()->PushState(StateTypes::STATE_ShipSelect);
 		});
 	m_listButton.push_back(button);
 

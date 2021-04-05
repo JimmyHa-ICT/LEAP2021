@@ -4,6 +4,12 @@
 #include "Bullet.h"
 #include "ResourceManagers.h"
 
+enum EnemyState {
+	AIMING = 0,
+	ATTACKING,
+	LEAVING, // for runnning, reload the bullet, prepare for re-aiming
+};
+
 class Enemy : public Sprite2D
 {
 public:
@@ -19,11 +25,18 @@ public:
 	void	SetBulletPool(std::shared_ptr<ObjectPool<Bullet>>);
 	void	SetVelocity(Vector2);
 	void	Init();
+	bool	InAttackRange(std::shared_ptr<Sprite2D>);
+	void	SetTarget(std::shared_ptr<Sprite2D>);
+	void	ChangeState(EnemyState);
 
 private:
+
+	EnemyState	m_state;
+	std::shared_ptr<Sprite2D> m_target;
+	int		m_bulletNum = 5;	//current number of bullets
 	int		m_hp;
 	float	m_velocity = 150;
 	float	m_currentTime = 0;
-	float	m_ShootInterval = 1;
+	float	m_ShootInterval = 0.3;
 	std::shared_ptr<ObjectPool<Bullet>>	m_bulletPool;
 };

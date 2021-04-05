@@ -283,6 +283,7 @@
     <ClCompile Include="src\GameStates\GSIntro.cpp" />
     <ClCompile Include="src\GameStates\GSMenu.cpp" />
     <ClCompile Include="src\GameStates\GSPlay.cpp" />
+    <ClCompile Include="src\GameStates\GSShipSelect.cpp" />
     <ClCompile Include="src\TrainingFramework.cpp" />
     <ClCompile Include="src\Util.cpp" />
   </ItemGroup>
@@ -314,6 +315,7 @@
     <ClInclude Include="src\GameStates\GSIntro.h" />
     <ClInclude Include="src\GameStates\GSMenu.h" />
     <ClInclude Include="src\GameStates\GSPlay.h" />
+    <ClInclude Include="src\GameStates\GSShipSelect.h" />
     <ClInclude Include="src\Util.h" />
   </ItemGroup>
   <ItemGroup>
