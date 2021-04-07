@@ -5,10 +5,8 @@ extern int screenHeight; //need get on Graphic engine
 
 
 Player::Player(std::shared_ptr<Models> model, std::shared_ptr<Shaders> shader, std::shared_ptr<Texture> texture)
-	: Sprite2D(model, shader, texture)
+	: Sprite2D(model, shader, texture), m_lives(6)
 {
-	m_lives = 6;
-
 }
 
 Player::~Player()
@@ -31,16 +29,16 @@ void Player::HandleKeyEvent(unsigned char key, bool bIsPresseded)
 {
 	if (bIsPresseded)
 	{
-		if (key == KEY_MOVE_LEFT)
+		if (key == KEY_MOVE_LEFT || key == KEY_LEFT)
 			horizontalInput = -1;
 
-		if (key == KEY_MOVE_RIGHT)
+		else if (key == KEY_MOVE_RIGHT || key == KEY_RIGHT)
 			horizontalInput = 1;
 
-		if (key == KEY_MOVE_BACKWORD)
+		if (key == KEY_MOVE_BACKWORD || key == KEY_DOWN)
 			verticalInput = 1;
 
-		if (key == KEY_MOVE_FORWORD)
+		if (key == KEY_MOVE_FORWORD || key == KEY_UP)
 			verticalInput = -1;
 
 		/*if (key == 'z' || key == 'Z')
@@ -100,4 +98,6 @@ bool Player::IsCollided(std::shared_ptr<Sprite2D> obj)		// AABB box collision de
 
 	if (A.y - this->m_iHeight / 2 > B.y + obj->Get2DSize().y / 2)
 		return false;
+
+	return true;
 }

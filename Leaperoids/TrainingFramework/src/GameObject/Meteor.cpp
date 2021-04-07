@@ -17,9 +17,9 @@ void Meteor::Update(GLfloat deltaTime)
 	Set2DPosition(Get2DPosition() + m_velocity * deltaTime);
 	Set2DRotation(m_2DRotation + m_angularVel * PI * deltaTime);
 
-	if (Get2DPosition().x  <  -300 || Get2DPosition().x > screenWidth + 300)
+	if (Get2DPosition().x  <  -100 || Get2DPosition().x > screenWidth + 100)
 		Reset();
-	else if (Get2DPosition().y  < -300 || Get2DPosition().y > screenHeight + 300)
+	else if (Get2DPosition().y  < -100 || Get2DPosition().y > screenHeight + 100)
 		Reset();
 }
 

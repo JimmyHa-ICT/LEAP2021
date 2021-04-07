@@ -4,7 +4,7 @@ extern int screenWidth; //need get on Graphic engine
 extern int screenHeight; //need get on Graphic engine
 
 Enemy::Enemy(std::shared_ptr<Models> model, std::shared_ptr<Shaders> shader, std::shared_ptr<Texture> texture)
-	: Sprite2D(model, shader, texture), m_hp(6), m_state(EnemyState::AIMING)
+	: Sprite2D(model, shader, texture), m_hp(10), m_state(EnemyState::AIMING)
 {
 }
 
@@ -26,7 +26,7 @@ void Enemy::EnemyAttack()
 {
 	auto bullet = m_bulletPool->GetObjectT();
 	bullet->Set2DPosition(Get2DPosition() + Vector2(-80 * sinf(Get2DRotation()), -80 * cosf(Get2DRotation())));
-	bullet->SetVelocity(Vector2(sinf(Get2DRotation()), cosf(Get2DRotation())) * -500);
+	bullet->SetVelocity(Vector2(sinf(Get2DRotation()), cosf(Get2DRotation())) * -700);
 	bullet->SetTexture(ResourceManagers::GetInstance()->GetTexture("enemyLaser"));
 	bullet->Set2DRotation(Get2DRotation());
 	bullet->SetSize(13, 37);
@@ -38,6 +38,7 @@ void Enemy::Reset()
 	m_target = nullptr;
 	Set2DPosition(0, 0);
 	isActive = false;
+	m_hp = 10;
 }
 
 void Enemy::SetTexture(std::shared_ptr<Texture> texture)
@@ -65,7 +66,7 @@ bool Enemy::InAttackRange(std::shared_ptr<Sprite2D> obj)
 	Vector2 t_pos = obj->Get2DPosition();
 	float distance = (e_pos.x - t_pos.x) * (e_pos.x - t_pos.x) + (e_pos.y - t_pos.y) * (e_pos.y - t_pos.y);
 
-	if (distance < 160000)
+	if (distance < 250000)
 		return true;
 	else
 		return false;
@@ -82,13 +83,24 @@ void Enemy::ChangeState(EnemyState estt)
 	m_state = estt;
 }
 
+bool Enemy::OnScreen()
+{
+	Vector2 pos = Get2DPosition();
+	
+	if (pos.x - m_iWidth / 2 < 0 || pos.x + m_iWidth / 2 > screenWidth)
+		return false;
+	if (pos.y - m_iHeight / 2 < 0 || pos.y + m_iHeight / 2 > screenHeight)
+		return false;
+	return true;
+}
+
 void Enemy::Update(GLfloat deltaTime)
 {
 	if (m_state == EnemyState::AIMING)
 	{
-		if (InAttackRange(m_target))
+		if (InAttackRange(m_target) && OnScreen())
 		{
-			m_bulletNum = 5;
+			m_bulletNum = 4;
 			ChangeState(EnemyState::ATTACKING);
 		}
 

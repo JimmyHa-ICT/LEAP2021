@@ -27,7 +27,7 @@ GSPlay::~GSPlay()
 void GSPlay::Init()
 {
 	auto model = ResourceManagers::GetInstance()->GetModel("Sprite2D");
-	auto texture = ResourceManagers::GetInstance()->GetTexture("bg_purple");
+	auto texture = ResourceManagers::GetInstance()->GetTexture("bg_blue2");
 
 	//BackGround
 	auto shader = ResourceManagers::GetInstance()->GetShader("TextureShader");
@@ -36,10 +36,10 @@ void GSPlay::Init()
 	m_BackGround->SetSize(screenWidth, screenHeight);
 
 	//pause button
-	texture = ResourceManagers::GetInstance()->GetTexture("button_back");
+	texture = ResourceManagers::GetInstance()->GetTexture("button_quit");
 	std::shared_ptr<GameButton> button = std::make_shared<GameButton>(model, shader, texture);
-	button->Set2DPosition(screenWidth - 150, 50);
-	button->SetSize(200, 50);
+	button->Set2DPosition(screenWidth - 100, 40);
+	button->SetSize(100, 25);
 	button->SetOnClick([]() {
 		GameStateMachine::GetInstance()->ChangeState(StateTypes::STATE_GameOver);
 		//exit(0);
@@ -70,36 +70,27 @@ void GSPlay::Init()
 
 	// enemy pool
 	m_enemyPool = std::make_shared<ObjectPool<Enemy>>();
-	auto l_enemy = m_enemyPool->GetObjectT();
-	l_enemy->Set2DPosition(0, 0);
-	l_enemy->SetSize(93, 84);
-	l_enemy->SetTexture(ResourceManagers::GetInstance()->GetTexture("enemyBlack1"));
-	l_enemy->SetBulletPool(m_bulletPool);
-	l_enemy->SetTarget(m_player);
-	/*for (int i = 0; i < 5; i++)
-	{
-		auto l_enemy = m_enemyPool->GetObjectT();
-		l_enemy->Set2DPosition(i * 250 + 100, 100);
-		l_enemy->Set2DRotation(PI);
-		l_enemy->SetSize(93, 84);
-		l_enemy->SetTexture(ResourceManagers::GetInstance()->GetTexture("enemyBlack1"));
-		l_enemy->SetBulletPool(m_bulletPool);
-	}*/
 
 	// meteor pool
 	m_meteorPool = std::make_shared<ObjectPool<Meteor>>();
-	//m_meteorPool->StartSpawning(0.5f);
+	m_meteorPool->StartSpawning(1.5f);
 
 	//sample particle system
 	m_particleSystem = std::make_shared<ParticleSystem>();
 	m_particleSystem->SetLifeTime(2, 3);
 
 
-	//text game title
+	//score text
 	shader = ResourceManagers::GetInstance()->GetShader("TextShader");
 	std::shared_ptr<Font> font = ResourceManagers::GetInstance()->GetFont("kenvector_future_thin");
 	m_score_text = std::make_shared< Text>(shader, font, Util::ToStringFixedLength(m_currentScore, 6), TEXT_COLOR::RED, 1.0);
 	m_score_text->Set2DPosition(Vector2(25, 50));
+
+	//level text
+	shader = ResourceManagers::GetInstance()->GetShader("TextShader");
+	font = ResourceManagers::GetInstance()->GetFont("kenvector_future");
+	m_levelText = std::make_shared< Text>(shader, font, "The boss is coming!", TEXT_COLOR::RED, 2);
+	m_levelText->Set2DPosition(Vector2(screenWidth / 2 - 300, screenHeight / 2));
 
 	srand(time(0));
 }
@@ -107,6 +98,10 @@ void GSPlay::Init()
 void GSPlay::Exit()
 {
 	Util::SetFinalScore(m_currentScore);
+	if (m_currentScore > Util::GetHighScore())
+	{
+		Util::SaveHighScore(m_currentScore);
+	}
 }
 
 
@@ -129,6 +124,9 @@ void GSPlay::HandleEvents()
 void GSPlay::HandleKeyEvents(int key, bool bIsPressed)
 {
 	m_player->HandleKeyEvent(key, bIsPressed);
+
+	if (key == KEY_BACK && bIsPressed)
+		GameStateMachine::GetInstance()->ChangeState(StateTypes::STATE_GameOver);
 }
 
 void GSPlay::HandleTouchEvents(int x, int y, bool bIsPressed)
@@ -148,8 +146,8 @@ void GSPlay::HandleTouchEvents(int x, int y, bool bIsPressed)
 		ResourceManagers::GetInstance()->PlaySound("sfx_laser1.ogg");
 		auto bullet = m_bulletPool->GetObjectT();
 		bullet->Set2DPosition(m_player->Get2DPosition() + 
-			Vector2(-50 * sinf(m_player->Get2DRotation()), -50 * cosf(m_player->Get2DRotation())));
-		bullet->SetVelocity(Vector2(sinf(m_player->Get2DRotation()), cosf(m_player->Get2DRotation())) * -500);
+			Vector2(-75 * sinf(m_player->Get2DRotation()), -75 * cosf(m_player->Get2DRotation())));
+		bullet->SetVelocity(Vector2(sinf(m_player->Get2DRotation()), cosf(m_player->Get2DRotation())) * -700);
 		bullet->SetTexture(ResourceManagers::GetInstance()->GetTexture(Util::ConvertBulletTexture(Util::shipColor)));
 		bullet->Set2DRotation(m_player->Get2DRotation());
 		bullet->SetSize(13, 37);
@@ -169,24 +167,30 @@ void GSPlay::Update(float deltaTime)
 	m_enemyPool->Update(deltaTime);
 	m_meteorPool->Update(deltaTime);
 	
+	// check collision between enemy and bullet
 	for (auto enemy : m_enemyPool->GetAllActive())
 	{
 		for (auto obj : m_bulletPool->GetAllActive())
 		{
 			if (obj->IsCollided(enemy))
 			{
-				//std::cout << "Collide!" << std::endl;
 				obj->Reset();
 				enemy->SetHP(enemy->GetHP() - 1);
 				if (enemy->GetHP() > 0)
 					m_particleSystem->Emit("particle2", 8, enemy->Get2DPosition());
 				else
-					m_particleSystem->Emit("particle2", 16, enemy->Get2DPosition());
-				//enemy->ChangeState(EnemyState::AIMING);
+				{
+					m_particleSystem->Emit("particle2", 32, enemy->Get2DPosition());
+					m_currentScore += 200;
+					m_currentLevel++;
+					m_score_text->setText(Util::ToStringFixedLength(m_currentScore, 6));
+					m_meteorPool->StartSpawning(1.5f - (m_currentLevel - 1) * 0.1f);
+				}
 			}
 		}
 	}
 
+	// check collision of meteor and others
 	for (auto meteor : m_meteorPool->GetAllActive())
 	{
 		for (auto obj : m_bulletPool->GetAllActive())
@@ -222,15 +226,18 @@ void GSPlay::Update(float deltaTime)
 			ResourceManagers::GetInstance()->PlaySound("rollover1.ogg");
 			meteor->Reset();
 			m_player->SetLives(m_player->GetLives() - 1);
+			m_particleSystem->Emit("particle2", 8, m_player->Get2DPosition());
 			if (m_player->GetLives() == 0)
 			{
 				ResourceManagers::GetInstance()->PlaySound("sfx_lose.ogg");
 				GameStateMachine::GetInstance()->ChangeState(StateTypes::STATE_GameOver);
 			}
-
+			else
+				ResourceManagers::GetInstance()->PlaySound("hurt.wav");
 		}
 	}
 
+	//checking collision between bullet and player
 	for (auto obj : m_bulletPool->GetAllActive())
 	{
 		if (obj->IsCollided(m_player))
@@ -238,15 +245,53 @@ void GSPlay::Update(float deltaTime)
 			obj->Reset();
 			ResourceManagers::GetInstance()->PlaySound("rollover1.ogg");
 			m_player->SetLives(m_player->GetLives() - 1);
+			m_particleSystem->Emit("particle2", 8, m_player->Get2DPosition());
 			if (m_player->GetLives() == 0)
 			{
 				ResourceManagers::GetInstance()->PlaySound("sfx_lose.ogg");
 				GameStateMachine::GetInstance()->ChangeState(StateTypes::STATE_GameOver);
 			}
+			else
+				ResourceManagers::GetInstance()->PlaySound("hurt.wav");
 		}
 	}
 
+	//enemy spawning
 	m_particleSystem->Update(deltaTime);
+	if (m_currentScore >= m_levelMission)
+	{
+		m_levelMission = m_levelMission * 2 + 200;
+		m_meteorPool->StopSpawning();
+
+		//spawn the bot
+		auto l_enemy = m_enemyPool->GetObjectT();
+		switch (rand() % 4)
+		{
+			case 0:
+				l_enemy->Set2DPosition(-300, rand() % screenHeight);
+				break;
+			case 1:
+				l_enemy->Set2DPosition(screenWidth + 300, rand() % screenHeight);
+				break;
+			case 2:
+				l_enemy->Set2DPosition(rand() % screenWidth, -300);
+				break;
+			case 3:
+				l_enemy->Set2DPosition(rand() % screenWidth, screenHeight + 300);
+				break;
+		}
+
+		l_enemy->SetSize(93, 84);
+		l_enemy->SetTexture(ResourceManagers::GetInstance()->GetTexture("enemyBlack1"));
+		l_enemy->SetBulletPool(m_bulletPool);
+		l_enemy->SetTarget(m_player);
+		m_displayTextTime = 1.5f;
+	}
+
+	if (m_displayTextTime > 0)
+	{
+		m_displayTextTime -= deltaTime;
+	}
 }
 
 void GSPlay::Draw()
@@ -270,4 +315,7 @@ void GSPlay::Draw()
 		m_liveRenderer[i]->Draw();
 	}
 	m_particleSystem->Draw();
+
+	if (m_displayTextTime > 0)
+		m_levelText->Draw();
 }

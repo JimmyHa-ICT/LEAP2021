@@ -2,17 +2,16 @@
 
 int Util::finalScore;
 int Util::shipColor;
+std::string Util::fileLocation = "meta.txt";
 
 void Util::SetFinalScore(int score)
 {
 	Util::finalScore = score;
 }
 
-std::string Util::GetFinalScore()
+int Util::GetFinalScore()
 {
-    if (finalScore)
-        return ToStringFixedLength(finalScore, 6);
-    return "000000";
+    return finalScore;
 }
 
 std::string Util::ToStringFixedLength(int value, int digits)
@@ -67,4 +66,35 @@ std::string Util::ConvertBulletTexture(int textr)
         return "laserGreen04";
     if (textr == 3)
         return "laserRed02";
+}
+
+void Util::SaveHighScore(int value)
+{
+    std::ofstream wf(fileLocation);
+    if (!wf)
+    {
+        std::cout << "Cannot open file!" << std::endl;
+        return;
+    }
+
+    wf << value;
+    wf.close();
+
+    if (!wf.good()) {
+        std::cout << "Error occurred at writing time!" << std::endl;
+        return;
+    }
+}
+
+int Util::GetHighScore()
+{
+    std::ifstream rf(fileLocation);
+    if (!rf) {
+        std::cout << "Cannot open file!" << std::endl;
+        return 0;
+    }
+
+    int score = 0;
+    rf >> score;
+    return score;
 }

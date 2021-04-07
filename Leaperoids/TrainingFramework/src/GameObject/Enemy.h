@@ -28,12 +28,13 @@ public:
 	bool	InAttackRange(std::shared_ptr<Sprite2D>);
 	void	SetTarget(std::shared_ptr<Sprite2D>);
 	void	ChangeState(EnemyState);
+	bool	OnScreen();
 
 private:
 
 	EnemyState	m_state;
 	std::shared_ptr<Sprite2D> m_target;
-	int		m_bulletNum = 5;	//current number of bullets
+	int		m_bulletNum = 4;	//current number of bullets
 	int		m_hp;
 	float	m_velocity = 150;
 	float	m_currentTime = 0;

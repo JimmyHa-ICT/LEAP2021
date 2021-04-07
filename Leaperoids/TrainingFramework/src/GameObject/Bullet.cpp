@@ -6,7 +6,7 @@ extern GLint screenHeight;
 
 
 Bullet::Bullet(std::shared_ptr<Models> model, std::shared_ptr<Shaders> shader, std::shared_ptr<Texture> texture)
-	: Sprite2D(model, shader, texture), m_velocity(Vector2(0, -500)), isActive(false)
+	: Sprite2D(model, shader, texture), m_velocity(Vector2(0, -800)), isActive(false)
 {
 	
 }
@@ -31,6 +31,8 @@ bool Bullet::IsCollided(std::shared_ptr<Sprite2D> obj)		// AABB box collision de
 
 	if (A.y - this->m_iHeight / 2 > B.y + obj->Get2DSize().y / 2)
 		return false;
+
+	return true;
 }
 
 void Bullet::Update(GLfloat deltaTime)

@@ -1,16 +1,7 @@
 ﻿cl : command line warning D9035: option 'Gm' has been deprecated and will be removed in a future release
-  Player.cpp
-F:\LEAP2021\FinalProject\Leaperoids\TrainingFramework\src\GameObject\Player.cpp(77,29): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
-F:\LEAP2021\FinalProject\Leaperoids\TrainingFramework\src\GameObject\Player.cpp(79,49): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
-F:\LEAP2021\FinalProject\Leaperoids\TrainingFramework\src\GameObject\Player.cpp(81,26): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
-F:\LEAP2021\FinalProject\Leaperoids\TrainingFramework\src\GameObject\Player.cpp(83,46): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
-  Enemy.cpp
-F:\LEAP2021\FinalProject\Leaperoids\TrainingFramework\src\GameObject\Enemy.h(40,24): warning C4305: 'initializing': truncation from 'double' to 'float'
-F:\LEAP2021\FinalProject\Leaperoids\TrainingFramework\src\GameObject\Enemy.cpp(138,40): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
-F:\LEAP2021\FinalProject\Leaperoids\TrainingFramework\src\GameObject\Enemy.cpp(138,70): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
-F:\LEAP2021\FinalProject\Leaperoids\TrainingFramework\src\GameObject\Enemy.cpp(138,90): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
-  Generating Code...
-F:\LEAP2021\FinalProject\Leaperoids\TrainingFramework\src\GameObject\Player.cpp(103): warning C4715: 'Player::IsCollided': not all control paths return a value
-Application.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/SAFESEH' specification
-LINK : warning LNK4098: defaultlib 'LIBCMTD' conflicts with use of other libs; use /NODEFAULTLIB:library
+  Util.cpp
+F:\LEAP2021\FinalProject\Leaperoids\TrainingFramework\src\Util.cpp(23,18): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+F:\LEAP2021\FinalProject\Leaperoids\TrainingFramework\src\Util.cpp(71): warning C4715: 'Util::ConvertBulletTexture': not all control paths return a value
+F:\LEAP2021\FinalProject\Leaperoids\TrainingFramework\src\Util.cpp(47): warning C4715: 'Util::ConvertShipTexture': not all control paths return a value
+F:\LEAP2021\FinalProject\Leaperoids\TrainingFramework\src\Util.cpp(59): warning C4715: 'Util::ConvertLifeTexture': not all control paths return a value
   TrainingFramework.vcxproj -> F:\LEAP2021\FinalProject\Leaperoids\BIN-Nvidia\TrainingFramework.exe

@@ -98,6 +98,7 @@ public:
 
 	void StartSpawning(float interval = 1)
 	{
+		spawnInterval = interval;
 		isSpawning = true;
 	}
 
@@ -141,5 +142,6 @@ public:
 	void StopSpawning()
 	{
 		isSpawning = false;
+		currentTime = 0;
 	}
 };

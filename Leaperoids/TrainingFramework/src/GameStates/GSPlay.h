@@ -45,5 +45,9 @@ private:
 	int m_currentScore = 0;
 	std::vector<std::shared_ptr<Sprite2D>> m_liveRenderer;
 	std::shared_ptr<ParticleSystem> m_particleSystem;
+	int m_currentLevel = 1;
+	int m_levelMission = 600;
+	std::shared_ptr<Text>  m_levelText;
+	float m_displayTextTime = 0;
 };
 

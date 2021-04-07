@@ -27,6 +27,8 @@ private:
 	std::list<std::shared_ptr<GameButton>>	m_listButton;
 	std::shared_ptr<Text>  m_Text_gameName;
 	std::shared_ptr<Sprite2D> m_ship;
+	std::shared_ptr<Sprite2D> m_leftBtn;
+	std::shared_ptr<Sprite2D> m_rightBtn;
 	int m_currentSelect = 0;
 };
 

@@ -21,7 +21,7 @@ void GSGameOver::Init()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	auto model = ResourceManagers::GetInstance()->GetModel("Sprite2D");
-	auto texture = ResourceManagers::GetInstance()->GetTexture("bg_blue");
+	auto texture = ResourceManagers::GetInstance()->GetTexture("bg_purple2");
 
 	//BackGround
 	auto shader = ResourceManagers::GetInstance()->GetShader("TextureShader");
@@ -29,36 +29,42 @@ void GSGameOver::Init()
 	m_BackGround->Set2DPosition(screenWidth / 2, screenHeight / 2);
 	m_BackGround->SetSize(screenWidth, screenHeight);
 
-	//play button
-	texture = ResourceManagers::GetInstance()->GetTexture("button_play");
+	//back button
+	texture = ResourceManagers::GetInstance()->GetTexture("button_back");
 	std::shared_ptr<GameButton> button = std::make_shared<GameButton>(model, shader, texture);
-	button->Set2DPosition(screenWidth / 2, 550);
+	button->Set2DPosition(screenWidth / 2, 650);
 	button->SetSize(275, 50);
 	button->SetOnClick([]() {
-		GameStateMachine::GetInstance()->ChangeState(StateTypes::STATE_Play);
+		GameStateMachine::GetInstance()->PopState();
 		});
 	m_listButton.push_back(button);
 
-	//exit button
-	texture = ResourceManagers::GetInstance()->GetTexture("button_quit");
-	button = std::make_shared<GameButton>(model, shader, texture);
-	button->Set2DPosition(screenWidth / 2, 625);
-	button->SetSize(275, 50);
-	button->SetOnClick([]() {
-		exit(0);
-		});
-	m_listButton.push_back(button);
-
-
-	//text game over
+	//text
 	shader = ResourceManagers::GetInstance()->GetShader("TextShader");
 	std::shared_ptr<Font> font = ResourceManagers::GetInstance()->GetFont("kenvector_future");
-	m_Text_gameName = std::make_shared< Text>(shader, font, "GAME OVER", TEXT_COLOR::WHILE, 1.5);
-	m_Text_gameName->Set2DPosition(Vector2(screenWidth / 2 - 140, 120));
+	auto m_Text = std::make_shared< Text>(shader, font, "GAME OVER", TEXT_COLOR::CYAN, 2);
+	m_Text->Set2DPosition(Vector2(screenWidth / 2 - 160, 150));
+	m_textList.push_back(m_Text);
+
+	auto m_Text2 = std::make_shared< Text>(shader, font, "YOUR SCORE", TEXT_COLOR::WHILE, 1.5);
+	m_Text2->Set2DPosition(Vector2(screenWidth / 2 - 140, screenHeight / 2 - 100));
+	m_textList.push_back(m_Text2);
 
 	//text score
-	m_scoreText = std::make_shared<Text>(shader, font, Util::GetFinalScore(), TEXT_COLOR::RED, 2.5);
-	m_scoreText->Set2DPosition(Vector2(screenWidth / 2 - 140, screenHeight / 2));
+	std::string score = std::to_string(Util::GetFinalScore());
+	auto m_scoreText = std::make_shared<Text>(shader, font, score, TEXT_COLOR::RED, 3);
+	m_scoreText->Set2DPosition(Vector2(screenWidth / 2 - score.length() * 25, screenHeight / 2));
+	m_textList.push_back(m_scoreText);
+
+	//highscore text
+	auto m_Text3 = std::make_shared< Text>(shader, font, "HIGH SCORE", TEXT_COLOR::WHILE, 1.2);
+	m_Text3->Set2DPosition(Vector2(screenWidth / 2 - 105, screenHeight / 2 + 100));
+	m_textList.push_back(m_Text3);
+
+	std::string highScore = std::to_string(Util::GetHighScore());
+	auto m_highScoreText = std::make_shared<Text>(shader, font, highScore, TEXT_COLOR::BLUE, 1.5);
+	m_highScoreText->Set2DPosition(Vector2(screenWidth / 2 - highScore.length() * 15, screenHeight / 2 + 140));
+	m_textList.push_back(m_highScoreText);
 }
 
 void GSGameOver::Exit()
@@ -112,6 +118,9 @@ void GSGameOver::Draw()
 	{
 		it->Draw();
 	}
-	m_Text_gameName->Draw();
-	m_scoreText->Draw();
+	
+	for (auto t : m_textList)
+	{
+		t->Draw();
+	}
 }

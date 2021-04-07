@@ -22,7 +22,7 @@ void GSShipSelect::Init()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	auto model = ResourceManagers::GetInstance()->GetModel("Sprite2D");
-	auto texture = ResourceManagers::GetInstance()->GetTexture("bg_blue");
+	auto texture = ResourceManagers::GetInstance()->GetTexture("bg_blue2");
 
 	//BackGround
 	auto shader = ResourceManagers::GetInstance()->GetShader("TextureShader");
@@ -46,12 +46,23 @@ void GSShipSelect::Init()
 		});
 	m_listButton.push_back(button);
 
+	//left and right button
+	texture = ResourceManagers::GetInstance()->GetTexture("button_left");
+	m_leftBtn = std::make_shared<Sprite2D>(model, shader, texture);
+	m_leftBtn->Set2DPosition(screenWidth / 2 - 300, screenHeight / 2);
+	m_leftBtn->SetSize(100, 100);
+
+	texture = ResourceManagers::GetInstance()->GetTexture("button_right");
+	m_rightBtn = std::make_shared<Sprite2D>(model, shader, texture);
+	m_rightBtn->Set2DPosition(screenWidth / 2 + 300, screenHeight / 2);
+	m_rightBtn->SetSize(100, 100);
+
 
 	//text game over
 	shader = ResourceManagers::GetInstance()->GetShader("TextShader");
 	std::shared_ptr<Font> font = ResourceManagers::GetInstance()->GetFont("kenvector_future");
-	m_Text_gameName = std::make_shared< Text>(shader, font, "SELECT PADDLE", TEXT_COLOR::RED, 1.5);
-	m_Text_gameName->Set2DPosition(Vector2(screenWidth / 2 - 180, 120));
+	m_Text_gameName = std::make_shared< Text>(shader, font, "SELECT SHIP", TEXT_COLOR::RED, 1.5);
+	m_Text_gameName->Set2DPosition(Vector2(screenWidth / 2 - 120, 120));
 }
 
 void GSShipSelect::Exit()
@@ -101,6 +112,26 @@ void GSShipSelect::HandleTouchEvents(int x, int y, bool bIsPressed)
 		(it)->HandleTouchEvents(x, y, bIsPressed);
 		if ((it)->IsHandle()) break;
 	}
+
+	Vector2 lp = m_leftBtn->Get2DPosition();
+	Vector2 rp = m_rightBtn->Get2DPosition();
+	if ((x > lp.x - 50) && (x < lp.x + 50) && (y > lp.y - 50) && (y < lp.y + 50) && bIsPressed)
+	{
+		ResourceManagers::GetInstance()->PlaySound("click1.ogg");
+		if (m_currentSelect > 0)
+			m_currentSelect--;
+		auto texture = ResourceManagers::GetInstance()->GetTexture(Util::ConvertShipTexture(m_currentSelect));
+		m_ship->SetTexture(texture);
+	}
+
+	if ((x > rp.x - 50) && (x < rp.x + 50) && (y > rp.y - 50) && (y < rp.y + 50) && bIsPressed)
+	{
+		ResourceManagers::GetInstance()->PlaySound("click1.ogg");
+		if (m_currentSelect < 3)
+			m_currentSelect++;
+		auto texture = ResourceManagers::GetInstance()->GetTexture(Util::ConvertShipTexture(m_currentSelect));
+		m_ship->SetTexture(texture);
+	}
 }
 
 void GSShipSelect::Update(float deltaTime)
@@ -121,4 +152,9 @@ void GSShipSelect::Draw()
 	}
 	m_Text_gameName->Draw();
 	m_ship->Draw();
+
+	if (m_currentSelect > 0)
+		m_leftBtn->Draw();
+	if (m_currentSelect < 3)
+		m_rightBtn->Draw();
 }
